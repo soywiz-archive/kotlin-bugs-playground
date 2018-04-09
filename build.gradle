@@ -1,7 +1,7 @@
 buildscript {
     ext.projectVersion = '0.0.1'
-    ext.kotlinVersion = '1.2.31'
-    //ext.kotlinVersion = '1.2.40-eap-16' // Reproduces on 1.2.40-eap-16 too
+    //ext.kotlinVersion = '1.2.31'
+    ext.kotlinVersion = '1.2.40-eap-16' // Reproduces on 1.2.40-eap-16 too
 
     repositories {
         mavenLocal()
