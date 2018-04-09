@@ -13,7 +13,7 @@ install:
 
 script:
   - jdk_switcher use oraclejdk8
-  - gradle -s -i check install
+  - gradle -s -i check
 
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
