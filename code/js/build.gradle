@@ -4,3 +4,44 @@ dependencies {
     expectedBy project(":code-common")
     compile project(":lib-js")
 }
+
+compileKotlin2Js {
+    kotlinOptions.outputFile = "${projectDir}/web/code.js"
+    kotlinOptions.sourceMap = false
+}
+
+clean {
+    delete new File("${projectDir}/web")
+}
+
+compileKotlin2Js.doLast {
+    configurations.compile.each { File file ->
+        copy {
+            includeEmptyDirs = false
+
+            from zipTree(file.absolutePath)
+            into "${projectDir}/web"
+            include { fileTreeElement ->
+                def path = fileTreeElement.path
+                (path.endsWith(".js") || path.endsWith(".js.map")) && (path.startsWith("META-INF/resources/") || !path.startsWith("META-INF/"))
+            }
+        }
+    }
+
+    copy {
+        from sourceSets.main.resources.srcDirs
+        into "${projectDir}/web"
+    }
+}
+
+check.doLast {
+    //NODE_PATH=code/js/web/ node code/js/web/code.js
+    Process process = "node code/js/web/code.js".execute(["NODE_PATH=code/js/web/"], new File("."))
+    def exitCode = process.waitFor()
+    println("exitCode: $exitCode")
+    process.inputStream.eachLine {System.out.println(it)}
+    process.errorStream.eachLine {System.err.println(it)}
+    if (exitCode != 0) {
+        throw new RuntimeException("ERROR executing node")
+    }
+}
