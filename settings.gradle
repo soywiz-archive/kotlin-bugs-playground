@@ -1,0 +1,17 @@
+rootProject.name = 'kotlin-bugs-playground'
+
+def registerVersion(artifactName, path) {
+        if (path.exists()) {
+                include ":$artifactName"
+                findProject(":$artifactName")?.projectDir = path
+        }
+}
+
+def registerModule(name) {
+        registerVersion("$name-common", file("$name/common"))
+        registerVersion("$name", file("$name/jvm"))
+        registerVersion("$name-js", file("$name/js"))
+}
+
+registerModule('lib')
+registerModule('code')

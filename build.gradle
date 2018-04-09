@@ -1,0 +1,72 @@
+buildscript {
+    ext.projectVersion = '0.0.1'
+    ext.kotlinVersion = '1.2.31'
+
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://dl.bintray.com/jetbrains/kotlin-native-dependencies" }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+    }
+}
+
+allprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    it.afterEvaluate {
+        if (it.plugins.hasPlugin("kotlin-platform-common")) {
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
+                testCompile "org.jetbrains.kotlin:kotlin-test-common:$kotlinVersion"
+                testCompile "org.jetbrains.kotlin:kotlin-test-annotations-common:$kotlinVersion"
+            }
+
+            kotlin {
+                experimental { coroutines 'enable' }
+            }
+        }
+        if (it.plugins.hasPlugin("kotlin-platform-jvm") || it.plugins.hasPlugin("kotlin")) {
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+                testCompile "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
+                testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
+                testCompile "junit:junit:4.12"
+            }
+
+            kotlin {
+                experimental { coroutines 'enable' }
+            }
+
+            compileJava.options.encoding = 'UTF-8'
+            compileTestJava.options.encoding = 'UTF-8'
+
+            sourceCompatibility = 1.7
+            targetCompatibility = 1.7
+        }
+
+        if (it.plugins.hasPlugin("kotlin-platform-js") || it.plugins.hasPlugin("kotlin2js")) {
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
+                testCompile "org.jetbrains.kotlin:kotlin-test-js:$kotlinVersion"
+            }
+
+            kotlin {
+                experimental { coroutines 'enable' }
+            }
+
+            [compileKotlin2Js, compileTestKotlin2Js]*.configure {
+                kotlinOptions.moduleKind = "umd"
+                kotlinOptions.sourceMap = true
+            }
+
+        }
+    }
+}
+
