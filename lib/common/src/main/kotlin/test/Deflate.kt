@@ -43,7 +43,7 @@ open class Deflate(val windowBits: Int) : CompressionMethod {
                     if (len != nnlen) error("Invalid file: len($len) != ~nlen($nnlen) :: nlen=$nlen")
                     ring.putOut(out, reader.alignbyte().s.readBytesExact(len), 0, len)
                 }
-                1, 2 -> {
+                in 1..2 -> {
                     val tree: HuffmanTree
                     val dist: HuffmanTree
                     if (btype == 1) {
